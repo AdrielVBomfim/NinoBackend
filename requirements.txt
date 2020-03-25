@@ -1,0 +1,7 @@
+Flask
+flask_restx
+flask_cors
+sklearn
+nltk
+gunicorn
+google-cloud-datastore
