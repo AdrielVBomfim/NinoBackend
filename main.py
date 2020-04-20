@@ -140,34 +140,28 @@ datastore_client = datastore.Client()
 #Trecho de código para definição estrutural da API
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "ninoprotection.now.sh"}})
 
 api = Api()
 api.init_app(app, version='0.1', title='NinoAPI', description='This is the API of the Nino Project. It gives access to some of the functionalities of our solution to predict cybercrimes involving children.'
                                                              '\n\nPlease refer to the documentation below for more information about what our solution can do.')
 
 sentence = api.model('Suspicious_Sentence', {
-    'phrase': fields.String
+    'phrase': fields.List(fields.String, description='phrases', required=True)
 })
 
-probability = api.model('Pedophile_Probability', {
-    'probability': fields.Float
-})
-
-@api.route('/prediction', doc={"description": "Returns the probability for the input phrase be from a pedophile."})
-@api.doc(responses={200: """Success""", 400: """Phrase to be analised was not sent"""})
+@api.route('/prediction', doc={"description": "Returns the probability for each of the phrases in the input set to be from a pedophile."})
+@api.doc(responses={200: """Success\n\nReturn model: ["95.66", "23.39", "17.91", ...]""", 400: """Set of phrases to be analised was not sent"""})
 class prediction(Resource):
-    @api.doc(body=sentence, model='Pedophile_Probability')
+    @api.doc(body=sentence)
     def post(self):
         A = TextSimilarity(init=2)
         req_data = request.get_json()
 
-        if 'phrase' in req_data:
-            probability = A.phrasePrediction(req_data['phrase'])
+        if 'phrases' in req_data:
+            return [A.phrasePrediction(phrase) for phrase in req_data['phrases']]
         else:
-            return 'Phrase to be analised was not sent', 400
-
-        return {"probability": probability}
+            return 'Set of phrases to be analised was not sent', 400
 
 @api.route('/sentences', doc={"description": "Returns all the sentences which are stored in the project associated Database and used as reference for our solution to predict cybercrimes."})
 @api.doc(responses={200:  """Success\n\nReturn model: ["I love you", "I like the way you play", "Can we talk somewhere else?", ...]"""})
