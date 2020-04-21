@@ -147,7 +147,7 @@ api.init_app(app, version='0.1', title='NinoAPI', description='This is the API o
                                                              '\n\nPlease refer to the documentation below for more information about what our solution can do.')
 
 sentence = api.model('Suspicious_Sentence', {
-    'phrase': fields.List(fields.String, description='phrases', required=True)
+    'phrases': fields.List(fields.String, description='phrases', required=True)
 })
 
 @api.route('/prediction', doc={"description": "Returns the probability for each of the phrases in the input set to be from a pedophile."})
