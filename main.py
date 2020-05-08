@@ -140,7 +140,7 @@ datastore_client = datastore.Client()
 #Trecho de código para definição estrutural da API
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "ninoprotection.now.sh"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 api = Api()
 api.init_app(app, version='0.1', title='NinoAPI', description='This is the API of the Nino Project. It gives access to some of the functionalities of our solution to predict cybercrimes involving children.'
